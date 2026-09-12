@@ -27,10 +27,21 @@ def require_app_password():
 
 @st.cache_resource
 def get_supabase():
-    return create_client(
-        st.secrets["SUPABASE_URL"],
-        st.secrets["SUPABASE_SERVICE_ROLE_KEY"]
-    )
+    url = st.secrets["SUPABASE_URL"]
+
+    # Preferência atual: Secret key do Supabase (sb_secret_...).
+    # Mantém compatibilidade com a antiga service_role key.
+    key = st.secrets.get("SUPABASE_SECRET_KEY", "")
+    if not key:
+        key = st.secrets.get("SUPABASE_SERVICE_ROLE_KEY", "")
+
+    if not key:
+        raise RuntimeError(
+            "Nenhuma chave de backend do Supabase foi encontrada nos Secrets. "
+            "Defina SUPABASE_SECRET_KEY."
+        )
+
+    return create_client(url, key)
 
 require_app_password()
 
