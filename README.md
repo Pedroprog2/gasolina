@@ -1,81 +1,31 @@
+# Banco Espectral ATR-FTIR — Streamlit + Supabase
 
-# Protótipo — Banco Espectral ATR-FTIR
+## O que muda
+- Streamlit: interface
+- Supabase PostgreSQL: metadados
+- Supabase Storage: arquivos espectrais originais
 
-MVP em Streamlit para:
+## Passos
+1. Crie um projeto no Supabase.
+2. No SQL Editor, execute `supabase_schema.sql`.
+3. Em Storage, crie um bucket PRIVADO chamado `ftir-spectra`.
+4. No Supabase, copie a Project URL e a service_role key.
+5. No Streamlit Community Cloud, abra App settings > Secrets.
+6. Cole:
+   SUPABASE_URL = "..."
+   SUPABASE_SERVICE_ROLE_KEY = "..."
+   APP_PASSWORD = "..."
+7. Substitua `app.py` e `requirements.txt` no GitHub pelo conteúdo deste pacote.
+8. Aguarde o redeploy.
 
-- carregar espectros ATR-FTIR em CSV/TXT;
-- visualizar o espectro;
-- cadastrar metadados da amostra e da aquisição;
-- registrar os dados em SQLite;
-- preservar o arquivo espectral original;
-- consultar e filtrar os registros;
-- exportar metadados;
-- reabrir e visualizar espectros já cadastrados.
+## Onde o espectro fica
+Exemplo:
+ftir-spectra/etanol/ETOH_0001/ETOH_0001_R01_espectro.csv
 
-## Estrutura
+Os metadados ficam na tabela:
+public.spectra
 
-```text
-ftir_streamlit_prototipo/
-├── app.py
-├── requirements.txt
-├── exemplo_etanol_ftir.csv
-├── README.md
-├── spectra/              # criada/usar durante execução
-└── ftir_database.db      # criado automaticamente
-```
-
-## Como executar
-
-No terminal:
-
-```bash
-cd ftir_streamlit_prototipo
-python -m venv .venv
-```
-
-Windows:
-
-```bash
-.venv\Scripts\activate
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-Linux/macOS:
-
-```bash
-source .venv/bin/activate
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-## Formato do espectro
-
-O protótipo espera duas colunas:
-
-```text
-wavenumber,intensity
-4000,0.102
-3996,0.103
-...
-```
-
-A primeira representa o número de onda em cm⁻¹ e a segunda a
-intensidade ou absorbância.
-
-O arquivo `exemplo_etanol_ftir.csv` é sintético e serve apenas para
-demonstração da interface.
-
-## Observação
-
-Nesta primeira versão, o banco possui uma tabela única para tornar o
-protótipo fácil de apresentar. Na versão de pesquisa, a estrutura pode
-ser normalizada em tabelas separadas, por exemplo:
-
-- samples
-- spectral_acquisitions
-- reference_analyses
-- instruments
-- models
-
-Isso permite uma arquitetura mais robusta sem complicar o MVP.
+## Segurança
+Nunca publique a service_role key no GitHub.
+Use apenas o gerenciador de Secrets do Streamlit.
+O APP_PASSWORD é opcional, mas recomendado para este protótipo.
